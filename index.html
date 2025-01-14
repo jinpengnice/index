@@ -57,7 +57,7 @@
     <input type="number" id="price" step="0.01" placeholder="请输入前高价格 (如 100)" required>
 
     <label for="percent">止损百分比 (%)：</label>
-    <input type="number" id="percent" step="0.01" value="2" required>
+    <input type="number" id="percent" step="0.01" value="5" required>
 
     <button type="button" onclick="calculateStopLoss()">计算止损价格</button>
 </form>
@@ -68,9 +68,9 @@
         // 获取用户输入的前高价格
         const price = parseFloat(document.getElementById("price").value);
 
-        // 获取止损百分比，使用默认值 2%（如果用户没有修改）
+        // 获取止损百分比，使用默认值 5%（如果用户没有修改）
         const percentInput = document.getElementById("percent");
-        const percent = parseFloat(percentInput.value) || 2;
+        const percent = parseFloat(percentInput.value) || 5;
 
         // 检查输入是否有效
         if (isNaN(price) || price <= 0 || isNaN(percent) || percent <= 0) {
