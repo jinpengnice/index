@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>止损价格计算器</title>
+    <title>止损与止盈价格计算器</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,39 +51,45 @@
     </style>
 </head>
 <body>
-<h1>止损价格计算器</h1>
-<form id="stoploss-form">
-    <label for="price">前高价格：</label>
-    <input type="number" id="price" step="0.01" placeholder="请输入前高价格 (如 100)" required>
+<h1>止损与止盈价格计算器</h1>
+<form id="calculator-form">
+    <label for="price">输入价格：</label>
+    <input type="number" id="price" step="0.01" placeholder="请输入价格 (如 100)" required>
 
-    <label for="percent">止损百分比 (%)：</label>
-    <input type="number" id="percent" step="0.01" value="5" required>
+    <label for="stoploss-percent">止损百分比 (%)：</label>
+    <input type="number" id="stoploss-percent" step="0.01" value="5" required>
 
-    <button type="button" onclick="calculateStopLoss()">计算止损价格</button>
+    <label for="takeprofit-percent">止盈百分比 (%)：</label>
+    <input type="number" id="takeprofit-percent" step="0.01" value="15" required>
+
+    <button type="button" onclick="calculatePrices()">计算价格</button>
 </form>
 <div id="result" class="result"></div>
 
 <script>
-    function calculateStopLoss() {
-        // 获取用户输入的前高价格
+    function calculatePrices() {
+        // 获取用户输入的价格
         const price = parseFloat(document.getElementById("price").value);
 
-        // 获取止损百分比，使用默认值 5%（如果用户没有修改）
-        const percentInput = document.getElementById("percent");
-        const percent = parseFloat(percentInput.value) || 5;
+        // 获取止损和止盈百分比
+        const stopLossPercent = parseFloat(document.getElementById("stoploss-percent").value) || 5;
+        const takeProfitPercent = parseFloat(document.getElementById("takeprofit-percent").value) || 15;
 
         // 检查输入是否有效
-        if (isNaN(price) || price <= 0 || isNaN(percent) || percent <= 0) {
-            document.getElementById("result").innerText = "请输入有效的前高价格！";
+        if (isNaN(price) || price <= 0 || isNaN(stopLossPercent) || stopLossPercent <= 0 || isNaN(takeProfitPercent) || takeProfitPercent <= 0) {
+            document.getElementById("result").innerText = "请输入有效的价格和百分比！";
             return;
         }
 
-        // 计算止损价格
-        const stopLoss = price * (1 - percent / 100);
+        // 计算止损价格和止盈价格
+        const stopLossPrice = price * (1 - stopLossPercent / 100);
+        const takeProfitPrice = price * (1 + takeProfitPercent / 100);
 
         // 显示结果
         document.getElementById("result").innerText =
-            `止损价格为：${stopLoss.toFixed(2)} （前高价格：${price}，止损百分比：${percent}%）`;
+            `输入价格：${price}\n` +
+            `止损价格为：${stopLossPrice.toFixed(2)} （止损百分比：${stopLossPercent}%）\n` +
+            `止盈价格为：${takeProfitPrice.toFixed(2)} （止盈百分比：${takeProfitPercent}%）`;
     }
 </script>
 </body>
