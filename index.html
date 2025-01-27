@@ -62,34 +62,59 @@
     <label for="takeprofit-percent">止盈百分比 (%)：</label>
     <input type="number" id="takeprofit-percent" step="0.01" value="15" required>
 
+    <label for="leverage">杠杆倍数：</label>
+    <input type="number" id="leverage" step="1" value="10" required>
+
     <button type="button" onclick="calculatePrices()">计算价格</button>
 </form>
 <div id="result" class="result"></div>
 
 <script>
-    function calculatePrices() {
-        // 获取用户输入的价格
-        const price = parseFloat(document.getElementById("price").value);
+    // 用于缓存计算结果的对象
+    const cache = {};
 
-        // 获取止损和止盈百分比
+    function calculatePrices() {
+        // 获取用户输入的值
+        const price = parseFloat(document.getElementById("price").value);
         const stopLossPercent = parseFloat(document.getElementById("stoploss-percent").value) || 5;
         const takeProfitPercent = parseFloat(document.getElementById("takeprofit-percent").value) || 15;
+        const leverage = parseFloat(document.getElementById("leverage").value) || 10;
 
         // 检查输入是否有效
-        if (isNaN(price) || price <= 0 || isNaN(stopLossPercent) || stopLossPercent <= 0 || isNaN(takeProfitPercent) || takeProfitPercent <= 0) {
-            document.getElementById("result").innerText = "请输入有效的价格和百分比！";
+        if (
+            isNaN(price) || price <= 0 ||
+            isNaN(stopLossPercent) || stopLossPercent <= 0 ||
+            isNaN(takeProfitPercent) || takeProfitPercent <= 0 ||
+            isNaN(leverage) || leverage <= 0
+        ) {
+            document.getElementById("result").innerText = "请输入有效的价格、百分比和杠杆倍数！";
             return;
         }
 
-        // 计算止损价格和止盈价格
-        const stopLossPrice = price * (1 - stopLossPercent / 100);
-        const takeProfitPrice = price * (1 + takeProfitPercent / 100);
+        // 生成缓存键
+        const cacheKey = `${price}-${stopLossPercent}-${takeProfitPercent}-${leverage}`;
+
+        // 检查缓存是否存在
+        if (cache[cacheKey]) {
+            document.getElementById("result").innerText = cache[cacheKey];
+            return;
+        }
+
+        // 计算止损价格和止盈价格（考虑杠杆倍数）
+        const stopLossPrice = price * (1 - (stopLossPercent / 100) / leverage);
+        const takeProfitPrice = price * (1 + (takeProfitPercent / 100) / leverage);
+
+        // 格式化结果
+        const resultText =
+            `输入价格：${price}\n` +
+            `止损价格为：${stopLossPrice.toFixed(2)} （止损百分比：${stopLossPercent}%，杠杆倍数：${leverage}）\n` +
+            `止盈价格为：${takeProfitPrice.toFixed(2)} （止盈百分比：${takeProfitPercent}%，杠杆倍数：${leverage}）`;
+
+        // 缓存结果
+        cache[cacheKey] = resultText;
 
         // 显示结果
-        document.getElementById("result").innerText =
-            `输入价格：${price}\n` +
-            `止损价格为：${stopLossPrice.toFixed(2)} （止损百分比：${stopLossPercent}%）\n` +
-            `止盈价格为：${takeProfitPrice.toFixed(2)} （止盈百分比：${takeProfitPercent}%）`;
+        document.getElementById("result").innerText = resultText;
     }
 </script>
 </body>
