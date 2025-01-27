@@ -65,12 +65,6 @@
     <label for="leverage">杠杆倍数：</label>
     <input type="number" id="leverage" step="1" value="1" required>
 
-    <label for="capital">总资金：</label>
-    <input type="number" id="capital" step="0.01" placeholder="请输入总资金 (如 10000)" required>
-
-    <label for="risk-percent">风险比例 (%)：</label>
-    <input type="number" id="risk-percent" step="0.01" value="1" required>
-
     <button type="button" onclick="calculatePrices()">计算价格</button>
 </form>
 <div id="result" class="result"></div>
@@ -85,24 +79,20 @@
         const stopLossPercent = parseFloat(document.getElementById("stoploss-percent").value) || 5;
         const takeProfitPercent = parseFloat(document.getElementById("takeprofit-percent").value) || 15;
         const leverage = parseFloat(document.getElementById("leverage").value) || 1;
-        const capital = parseFloat(document.getElementById("capital").value);
-        const riskPercent = parseFloat(document.getElementById("risk-percent").value) || 1;
 
         // 检查输入是否有效
         if (
             isNaN(price) || price <= 0 ||
             isNaN(stopLossPercent) || stopLossPercent <= 0 ||
             isNaN(takeProfitPercent) || takeProfitPercent <= 0 ||
-            isNaN(leverage) || leverage <= 0 ||
-            isNaN(capital) || capital <= 0 ||
-            isNaN(riskPercent) || riskPercent <= 0
+            isNaN(leverage) || leverage <= 0
         ) {
-            document.getElementById("result").innerText = "请输入有效的价格、百分比、杠杆倍数、总资金和风险比例！";
+            document.getElementById("result").innerText = "请输入有效的价格、百分比和杠杆倍数！";
             return;
         }
 
         // 生成缓存键
-        const cacheKey = `${price}-${stopLossPercent}-${takeProfitPercent}-${leverage}-${capital}-${riskPercent}`;
+        const cacheKey = `${price}-${stopLossPercent}-${takeProfitPercent}-${leverage}`;
 
         // 检查缓存是否存在
         if (cache[cacheKey]) {
@@ -114,17 +104,11 @@
         const stopLossPrice = price * (1 - (stopLossPercent / 100) / leverage);
         const takeProfitPrice = price * (1 + (takeProfitPercent / 100) / leverage);
 
-        // 计算单次开仓的仓位大小
-        const stopLossAmount = price * (stopLossPercent / 100) / leverage;
-        const positionSize = (capital * (riskPercent / 100)) / stopLossAmount;
-
         // 格式化结果
         const resultText =
             `输入价格：${price}\n` +
             `止损价格为：${stopLossPrice.toFixed(2)} （止损百分比：${stopLossPercent}%，杠杆倍数：${leverage}）\n` +
-            `止盈价格为：${takeProfitPrice.toFixed(2)} （止盈百分比：${takeProfitPercent}%，杠杆倍数：${leverage}）\n` +
-            `总资金：${capital.toFixed(2)}，风险比例：${riskPercent}%\n` +
-            `建议单次开仓大小：${positionSize.toFixed(2)}`;
+            `止盈价格为：${takeProfitPrice.toFixed(2)} （止盈百分比：${takeProfitPercent}%，杠杆倍数：${leverage}）`;
 
         // 缓存结果
         cache[cacheKey] = resultText;
