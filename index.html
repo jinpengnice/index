@@ -63,7 +63,7 @@
     <input type="number" id="takeprofit-percent" step="0.01" value="15" required>
 
     <label for="leverage">杠杆倍数：</label>
-    <input type="number" id="leverage" step="1" value="10" required>
+    <input type="number" id="leverage" step="1" value="20" required>
 
     <button type="button" onclick="calculatePrices()">计算价格</button>
 </form>
@@ -78,7 +78,7 @@
         const price = parseFloat(document.getElementById("price").value);
         const stopLossPercent = parseFloat(document.getElementById("stoploss-percent").value) || 5;
         const takeProfitPercent = parseFloat(document.getElementById("takeprofit-percent").value) || 15;
-        const leverage = parseFloat(document.getElementById("leverage").value) || 10;
+        const leverage = parseFloat(document.getElementById("leverage").value) || 20;
 
         // 检查输入是否有效
         if (
